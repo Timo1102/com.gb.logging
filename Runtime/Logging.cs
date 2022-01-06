@@ -12,7 +12,7 @@ namespace gb.Runtime
 
         private static LogSettings settings;
 
-        private static Func<string, string> template;
+        private static ILogMessageTemplate template;
 
         [RuntimeInitializeOnLoadMethod]
         static void OnRuntimeMethodLoad()
@@ -24,24 +24,14 @@ namespace gb.Runtime
 
             if (UnityEngine.Debug.isDebugBuild)
             {
-                template = (message) => {
-                    var templateString = settings.Templates.FirstOrDefault(x => x.Symbol == "Debug");
-                    if(templateString != null)
-                    {
-                        return templateString.TemplateString.Replace("{message}", message);
-                    }
-
-                    return message;
-                };
+                var templateString = settings.Templates.FirstOrDefault(x => x.Symbol == "Debug");
+                if (templateString != null)
+                {
+                    template = templateString.TemplateString;
+                }
             }
 
-
-            Debug = new Logger(UnityEngine.Debug.unityLogger);
-        }
-
-        public static void Log(string message)
-        {
-            Debug.Log(LogType.Log, message: template(message));
+            Debug = new Logger(new LogHandler(template));
         }
     }
 }
