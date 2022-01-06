@@ -7,27 +7,28 @@ using UnityEditor;
 #endif 
 using UnityEngine;
 
-[Settings(SettingsUsage.RuntimeProject, "My Project Settings")]
+[Settings(SettingsUsage.RuntimeProject, "Debug Log Settings")]
 public sealed class LogSettings : Settings<LogSettings>
 {
 #if UNITY_EDITOR
     [SettingsProvider]
     static SettingsProvider GetSettingsProvider() => instance.GetSettingsProvider();
 #endif
-    public int count { get => _count; set => Set(ref _count, value); }
-    [SerializeField] int _count = 5;
+    [SerializeField]
+    private List<TemplateLiteral> templates = new List<TemplateLiteral>();
 
-    public List<string> Templates = new List<string>();
+    public List<TemplateLiteral> Templates => templates;
 
-    // Example SubSettings class.
     [System.Serializable]
-    public class AdvancedSettings : SubSettings
+    public class TemplateLiteral
     {
-        public string text { get => _text; set => Set(ref _text, value); }
-        [SerializeField] string _text = "Some Text";
-    }
+        [SerializeField]
+        private string symbol;
+        [SerializeField]
+        private string templateString;
 
-    // The instance of the advanced settings.
-    public AdvancedSettings advancedSettings => _advancedSettings;
-    [SerializeField] AdvancedSettings _advancedSettings;
+        public string Symbol => symbol;
+
+        public string TemplateString => templateString;
+    }
 }
